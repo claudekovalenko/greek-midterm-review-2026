@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Greek Midterm Review</title>
+<style>
+:root {
+  --bg: #f4f5f9; --card: #fff; --soft: #eef0f5; --ink: #181a22; --mute: #636878;
+  --line: #dde0e8; --accent: #3b5bdb; --ok: #1f9d55; --bad: #d64545; --part: #c98a12;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1016; --card: #171a23; --soft: #1e222d; --ink: #e8eaf2; --mute: #9aa0b3;
+    --line: #2a2f3c; --accent: #7c95ff; --ok: #3ccf7f; --bad: #ff6b6b; --part: #f0b23a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1016; --card: #171a23; --soft: #1e222d; --ink: #e8eaf2; --mute: #9aa0b3;
+  --line: #2a2f3c; --accent: #7c95ff; --ok: #3ccf7f; --bad: #ff6b6b; --part: #f0b23a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.wrap { max-width: 640px; margin: 0 auto; padding: 16px 16px 48px; }
+h1 { font-size: 20px; margin: 4px 0 12px; }
+.seg { display: flex; background: var(--soft); border-radius: 12px; padding: 4px; gap: 4px; }
+.seg button { flex: 1; border: 0; background: none; color: var(--mute); padding: 10px 6px;
+  border-radius: 9px; font: inherit; font-weight: 600; cursor: pointer; }
+.seg button.on { background: var(--card); color: var(--ink); box-shadow: 0 1px 3px #0002; }
+.hint { color: var(--mute); font-size: 13px; margin: 6px 2px 12px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.chip { border: 1px solid var(--line); background: var(--card); color: var(--mute);
+  padding: 6px 12px; border-radius: 999px; font: inherit; font-size: 14px; cursor: pointer; }
+.chip.on { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.row { display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  color: var(--mute); font-size: 14px; margin: 14px 2px 8px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
+.tag { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); }
+.prompt { font-weight: 600; margin: 6px 0 10px; }
+.greek { font-family: "Gentium Plus", "SBL Greek", Palatino, "Palatino Linotype", Georgia, serif;
+  font-size: 24px; line-height: 1.45; margin: 4px 0 14px; }
+.greek u { text-decoration-color: var(--accent); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+textarea { width: 100%; min-height: 56px; border: 1px solid var(--line); border-radius: 10px;
+  background: var(--soft); color: var(--ink); font: inherit; padding: 10px; resize: vertical; }
+.btn { border: 0; border-radius: 12px; padding: 13px 16px; font: inherit; font-weight: 700; cursor: pointer; width: 100%; }
+.primary { background: var(--accent); color: #fff; margin-top: 12px; }
+.grade { display: flex; gap: 8px; margin-top: 14px; }
+.grade .btn { color: #fff; }
+.miss { background: var(--bad); } .got { background: var(--ok); }
+.ans { margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--line); white-space: pre-line; }
+.ans b { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--mute); }
+.ans .key { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+.mine { border-radius: 10px; padding: 8px 10px; margin-top: 8px; font-size: 15px; background: var(--soft); }
+.mine.false, .mine.null { border-left: 4px solid var(--bad); }
+.mine.part { border-left: 4px solid var(--part); }
+.mine.true { border-left: 4px solid var(--ok); }
+.note { color: var(--mute); font-size: 14px; margin-top: 8px; }
+.bar { height: 6px; background: var(--soft); border-radius: 3px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); }
+.done { text-align: center; }
+.done .big { font-size: 40px; font-weight: 800; }
+.link { background: none; border: 0; color: var(--accent); font: inherit; font-size: 14px; cursor: pointer; padding: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Greek Midterm Review</h1>
+  <div class="seg" id="mode">
+    <button data-m="quiz">Past quizzes</button>
+    <button data-m="mix">Midterm mix</button>
+  </div>
+  <p class="hint" id="modeHint"></p>
+  <div class="chips" id="srcChips"></div>
+  <div class="chips" id="optChips"></div>
+  <div class="row"><span id="count"></span><button class="link" id="restart">Restart</button></div>
+  <div class="bar"><i id="barFill"></i></div>
+  <div style="height:12px"></div>
+  <div id="stage"></div>
+</div>
+<script src="data.js"></script>
+<script>
+const SRC = {
+  quiz: [["Q1","Quiz 1 · ch.1 vocab"],["Q2","Quiz 2 · Nom/Voc/Acc"],["Q3","Quiz 3 · Genitive"],["Q4","Quiz 4 · Dative"],["Q5","Quiz 5 · Article/Adj"]],
+  mix: [["Quizzes","Past quizzes"],["Ch12","Ch. 12 questions"],["Passage","Passage classification"],["Translate","Passage translation"]],
+};
+const LABEL = { Q1:"Quiz 1", Q2:"Quiz 2", Q3:"Quiz 3", Q4:"Quiz 4", Q5:"Quiz 5", Ch12:"Ch. 12", Passage:"Passage", Translate:"Translate" };
+const HINT = {
+  quiz: "Word for word from your graded quizzes, with what you wrote.",
+  mix: "Quizzes plus the rest of the study guide. Quiz questions come up twice as often.",
+};
+
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("gmr:" + k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem("gmr:" + k, JSON.stringify(v)); } catch {} },
+};
+let S = store.get("settings", {
+  mode: "quiz",
+  quiz: ["Q1","Q2","Q3","Q4","Q5"],
+  mix: ["Quizzes","Ch12","Passage","Translate"],
+  wrongOnQuiz: false, wrongHere: false, inOrder: false,
+});
+let misses = store.get("misses", {}); // id -> count still owed
+let deck = [], pos = 0, right = 0, shown = false;
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const isQuiz = (c) => /^Q\d$/.test(c.src);
+const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+function pool() {
+  let cards = CARDS.filter((c) => S.mode === "quiz"
+    ? isQuiz(c) && S.quiz.includes(c.src)
+    : isQuiz(c) ? S.mix.includes("Quizzes") : S.mix.includes(c.src));
+  if (S.wrongOnQuiz) cards = cards.filter((c) => isQuiz(c) && c.ok !== true);
+  if (S.wrongHere) cards = cards.filter((c) => misses[c.id]);
+  return cards;
+}
+
+function build() {
+  let cards = pool();
+  if (S.mode === "mix") cards = cards.flatMap((c) => isQuiz(c) ? [c, c] : [c]);
+  if (!(S.mode === "quiz" && S.inOrder)) {
+    shuffle(cards);
+    // keep a doubled quiz card from showing up twice in a row
+    for (let i = 1; i < cards.length; i++) if (cards[i] === cards[i - 1]) {
+      const j = cards.findIndex((c, k) => k > i && c !== cards[i] && cards[k - 1] !== cards[i]);
+      if (j > 0) [cards[i], cards[j]] = [cards[j], cards[i]];
+    }
+  }
+  deck = cards; pos = 0; right = 0; shown = false;
+  render();
+}
+
+function chips() {
+  $("mode").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.m === S.mode));
+  $("modeHint").textContent = HINT[S.mode];
+  const on = S[S.mode];
+  $("srcChips").innerHTML = SRC[S.mode].map(([k, l]) =>
+    `<button class="chip ${on.includes(k) ? "on" : ""}" data-src="${k}">${l}</button>`).join("");
+  const opts = [["wrongOnQuiz","Only ones I lost points on"],["wrongHere","Only ones I've missed here"]];
+  if (S.mode === "quiz") opts.push(["inOrder","In quiz order"]);
+  $("optChips").innerHTML = opts.map(([k, l]) =>
+    `<button class="chip ${S[k] ? "on" : ""}" data-opt="${k}">${l}</button>`).join("");
+}
+
+function render() {
+  chips();
+  const total = deck.length;
+  $("count").textContent = total ? `${Math.min(pos + 1, total)} / ${total} · ${right} right` : "";
+  $("barFill").style.width = total ? `${(pos / total) * 100}%` : "0";
+  const st = $("stage");
+  if (!total) { st.innerHTML = `<div class="card done"><p>No cards match. Turn a filter off.</p></div>`; return; }
+  if (pos >= total) {
+    const pct = Math.round((right / total) * 100);
+    const owed = Object.keys(misses).length;
+    st.innerHTML = `<div class="card done"><div class="big">${pct}%</div><p>${right} of ${total} right.</p>
+      ${owed ? `<button class="btn primary" id="drillMisses">Drill the ${owed} I keep missing</button>` : ""}
+      <button class="btn primary" id="again">Go again</button></div>`;
+    $("again").onclick = build;
+    if ($("drillMisses")) $("drillMisses").onclick = () => { S.wrongHere = true; save(); build(); };
+    return;
+  }
+  const c = deck[pos];
+  const tag = isQuiz(c) ? `${LABEL[c.src]} · ${c.sec}${c.n != null ? " #" + c.n : ""}` : `${LABEL[c.src]} · ${c.sec}`;
+  let html = `<div class="card"><div class="tag">${esc(tag)}</div>
+    <div class="prompt">${esc(c.p)}</div>
+    ${c.g ? `<div class="greek">${c.g}</div>` : ""}
+    <textarea id="try" placeholder="Your answer (optional)"></textarea>`;
+  if (!shown) {
+    html += `<button class="btn primary" id="reveal">Show answer</button></div>`;
+  } else {
+    html += `<div class="ans"><b>Answer</b><div class="key">${esc(c.a)}</div>`;
+    if (isQuiz(c)) {
+      const mark = c.ok === true ? "✓" : c.ok === "part" ? "½" : "✗";
+      html += `<div class="mine ${c.ok}"><b>On the quiz you wrote ${mark}</b>${c.mine ? esc(c.mine) : "<i>(left blank)</i>"}</div>`;
+    }
+    if (c.note) html += `<div class="note">${esc(c.note)}</div>`;
+    html += `</div><div class="grade"><button class="btn miss" id="miss">Missed it</button><button class="btn got" id="got">Got it</button></div></div>`;
+  }
+  st.innerHTML = html;
+  const t = $("try"); t.value = window._draft || "";
+  t.oninput = () => (window._draft = t.value);
+  if (!shown) {
+    $("reveal").onclick = () => { shown = true; render(); };
+  } else {
+    $("got").onclick = () => grade(true);
+    $("miss").onclick = () => grade(false);
+  }
+}
+
+function grade(ok) {
+  const c = deck[pos];
+  if (ok) {
+    right++;
+    if (misses[c.id] && --misses[c.id] <= 0) delete misses[c.id];
+  } else {
+    misses[c.id] = 2; // need to get it right twice to clear it
+    // bring it back a few cards later this round
+    deck.splice(Math.min(pos + 4, deck.length), 0, c);
+  }
+  store.set("misses", misses);
+  pos++; shown = false; window._draft = "";
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function save() { store.set("settings", S); }
+
+$("mode").onclick = (e) => { const m = e.target.dataset.m; if (!m) return; S.mode = m; save(); build(); };
+$("srcChips").onclick = (e) => {
+  const k = e.target.dataset.src; if (!k) return;
+  const list = S[S.mode];
+  S[S.mode] = list.includes(k) ? list.filter((x) => x !== k) : [...list, k];
+  save(); build();
+};
+$("optChips").onclick = (e) => { const k = e.target.dataset.opt; if (!k) return; S[k] = !S[k]; save(); build(); };
+$("restart").onclick = build;
+document.addEventListener("keydown", (e) => {
+  if (e.target.tagName === "TEXTAREA" && !(e.key === "Enter" && (e.metaKey || e.ctrlKey))) return;
+  if (pos >= deck.length) return;
+  if (!shown && (e.key === " " || e.key === "Enter")) { e.preventDefault(); shown = true; render(); }
+  else if (shown && (e.key === "1" || e.key === "ArrowLeft")) grade(false);
+  else if (shown && (e.key === "2" || e.key === "ArrowRight")) grade(true);
+});
+build();
+</script>
+</body>
+</html>
