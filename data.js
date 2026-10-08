@@ -159,11 +159,18 @@ const QUIZ = [
 ];
 
 // ── Study-guide items the quizzes don't cover ───────────────────────
+// Quiz 6 (ch. 12) — headed "Chapter 10 Quiz" on the paper.
 const CH12 = [
-  { src: "Ch12", sec: "Ch. 12", p: "What is a pronoun?", a: "A word that stands in for a noun (its antecedent), so the noun need not be repeated." },
-  { src: "Ch12", sec: "Ch. 12", p: "What are the types of pronouns? Explain each.", a: "Personal — who is talking (ἐγώ, σύ, αὐτός)\nDemonstrative — points: this/that (οὗτος, ἐκεῖνος)\nRelative — links back: who/which (ὅς, ἥ, ὅ)\nInterrogative — asks: who? what? (τίς, τί)\nIndefinite — someone, anyone (τις, τι)\nReflexive — the self (ἐμαυτόν, ἑαυτόν)\nReciprocal — each other (ἀλλήλων)", note: "Me · This · Who · Who? · Anyone · Myself · Each other" },
-  { src: "Ch12", sec: "Ch. 12", p: "What can an adverb modify?", a: "A verb, an adjective, or another adverb. (With an article it can even act as a noun or adjective.)" },
-  { src: "Ch12", sec: "Ch. 12", p: "What is the difference between a proper and an improper preposition?", a: "Proper: can be prefixed to a verb to make a compound (ἐκ + πορεύομαι → ἐκπορεύομαι).\nImproper: never compounded with a verb; really an adverb used as a preposition, usually + genitive (χωρίς, ἐνώπιον, ὀπίσω, ἄχρι, ἕως, ἔμπροσθεν)." },
+  { src: "Q6", sec: "Pronouns", n: "1.1", p: "What is a pronoun?", a: "A word that stands in for a noun (its antecedent) — any noun, not just a name — so the noun need not be repeated.", mine: "A replacement of a proper noun like a name", ok: "part", note: "Any noun, not only proper nouns." },
+  { src: "Q6", sec: "Pronouns", n: "1.2", p: "Name five types of pronouns and describe what they are.", a: "Personal — who is talking: I, you, he (ἐγώ, σύ, αὐτός)\nDemonstrative — points: this / that (οὗτος, ἐκεῖνος)\nRelative — links back: who / which (ὅς, ἥ, ὅ)\nInterrogative — asks: who? what? (τίς, τί)\nIndefinite — someone, anyone (τις, τι)\nReflexive — the self: myself, yourself (ἐμαυτοῦ, σεαυτοῦ)\nReciprocal — each other (ἀλλήλων)", mine: "Interrogative – who?; Reflexive – posing a question; Replacement; Personal – refers to me; Demonstrative", ok: "part", note: "Reflexive is “-self”, not a question (that's interrogative). “Replacement” isn't a type. Mnemonic: Me · This · Who · Who? · Anyone · Myself · Each other." },
+  { src: "Q6", sec: "Pronouns", n: "1.3", p: "What is the difference between an improper and a proper preposition?", a: "Proper: can be prefixed to a verb to make a compound (ἐκ + πορεύομαι → ἐκπορεύομαι).\nImproper: never compounded with a verb; really an adverb used as a preposition, usually + genitive (χωρίς, ἐνώπιον, ὀπίσω, ἄχρι, ἕως, ἔμπροσθεν).", mine: "Improper refers to a thing; proper refers to a person", ok: false, note: "Nothing to do with persons — it's whether it can be glued onto a verb." },
+  { src: "Q6", sec: "Pronouns", n: "1.4", p: "What does an adverb modify?", a: "A verb, an adjective, or another adverb. (With an article it can even act as a noun or adjective.)", mine: "A verb", ok: "part", note: "3 points = 3 things: verb, adjective, adverb." },
+  V("Q6", "1.5", "βλασφημέω", "I blaspheme, slander, defame", "Blasphemy", "part", "Verb, not noun: “I blaspheme”."),
+  V("Q6", "1.6", "διδασκαλία, ἡ", "teaching, instruction", "Teaching", true),
+  V("Q6", "1.7", "σεαυτοῦ", "(of) yourself — reflexive, 2nd person", "", null),
+  { src: "Q6", sec: "Translation", n: 2, p: "Translate.", g: "οὗτος ἦλθεν εἰς μαρτυρίαν ἵνα μαρτυρήσῃ περὶ τοῦ φωτός", a: "He came as (for) a witness, so that he might testify about the light. (John 1:7)", mine: "Righteousness that righteousness about the light", ok: false, note: "μαρτυρία / μαρτυρέω = witness / testify (martyr), not righteousness (δικαιοσύνη)." },
+  { src: "Q6", sec: "Extra credit", n: "3.1", p: "Classify the underlined word.", g: "καὶ τὸ φῶς ἐν τῇ <u>σκοτίᾳ</u> φαίνει, καὶ ἡ σκοτία αὐτὸ οὐ κατέλαβεν", a: "Dative, locative — sphere (figurative realm “in the darkness”); place is the literal reading.", mine: "Place", ok: "part", note: "Check with your notes: darkness here is figurative, which points to sphere." },
+  { src: "Q6", sec: "Extra credit", n: "3.2", p: "Classify the underlined word.", g: "Ἐγένετο ἄνθρωπος, ἀπεσταλμένος παρὰ <u>θεοῦ</u>", a: "Genitive of source — “sent from God” (παρά + genitive = from).", mine: "", ok: null },
 ];
 
 // Classifications drawn from the three midterm passages.

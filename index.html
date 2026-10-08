@@ -86,10 +86,10 @@ textarea { width: 100%; min-height: 56px; border: 1px solid var(--line); border-
 <script src="hooks.js"></script>
 <script>
 const SRC = {
-  quiz: [["Q1","Quiz 1 · ch.1 vocab"],["Q2","Quiz 2 · Nom/Voc/Acc"],["Q3","Quiz 3 · Genitive"],["Q4","Quiz 4 · Dative"],["Q5","Quiz 5 · Article/Adj"]],
-  mix: [["Quizzes","Past quizzes"],["Ch12","Ch. 12 questions"],["Passage","Passage classification"],["Translate","Passage translation"]],
+  quiz: [["Q1","Quiz 1 · ch.1 vocab"],["Q2","Quiz 2 · Nom/Voc/Acc"],["Q3","Quiz 3 · Genitive"],["Q4","Quiz 4 · Dative"],["Q5","Quiz 5 · Article/Adj"],["Q6","Quiz 6 · Ch. 12"]],
+  mix: [["Quizzes","Past quizzes"],["Passage","Passage classification"],["Translate","Passage translation"]],
 };
-const LABEL = { Q1:"Quiz 1", Q2:"Quiz 2", Q3:"Quiz 3", Q4:"Quiz 4", Q5:"Quiz 5", Ch12:"Ch. 12", Passage:"Passage", Translate:"Translate" };
+const LABEL = { Q1:"Quiz 1", Q2:"Quiz 2", Q3:"Quiz 3", Q4:"Quiz 4", Q5:"Quiz 5", Q6:"Quiz 6", Passage:"Passage", Translate:"Translate" };
 const HINT = {
   quiz: "Word for word from your graded quizzes, with what you wrote.",
   mix: "Quizzes plus the rest of the study guide. Quiz questions come up twice as often.",
@@ -100,11 +100,13 @@ const store = {
   set(k, v) { try { localStorage.setItem("gmr:" + k, JSON.stringify(v)); } catch {} },
 };
 let S = store.get("settings", {
-  mode: "quiz",
-  quiz: ["Q1","Q2","Q3","Q4","Q5"],
-  mix: ["Quizzes","Ch12","Passage","Translate"],
+  mode: "quiz", hasQ6: true,
+  quiz: ["Q1","Q2","Q3","Q4","Q5","Q6"],
+  mix: ["Quizzes","Passage","Translate"],
   wrongOnQuiz: false, wrongHere: false, inOrder: false,
 });
+// Quiz 6 came later: switch it on once for anyone with older saved settings.
+if (!S.hasQ6) { if (!S.quiz.includes("Q6")) S.quiz.push("Q6"); S.mix = S.mix.filter((k) => k !== "Ch12"); S.hasQ6 = true; }
 let misses = store.get("misses", {}); // id -> count still owed
 let deck = [], pos = 0, right = 0, shown = false;
 

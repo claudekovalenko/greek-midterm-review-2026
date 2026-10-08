@@ -379,5 +379,17 @@ window.HOOKS = {
  "ἄρτι": {
   "mn": "AHR-tee ≈ \"ARTY.\" The arty crowd care about nothing but NOW.",
   "icon": "⏱️"
+ },
+ "βλασφημέω": {
+  "mn": "vlahs-fay-MEH-o ≈ \"vlas-fay-MAY-o.\" Spelled βλασφ-, our BLASPHEME — Koine β says \"v\": I BLASPHEME, SLANDER.",
+  "icon": "🤬"
+ },
+ "διδασκαλία, ἡ": {
+  "mn": "thee-thahs-kah-LEE-ah ≈ \"thee-thas-ka-LEE-ah.\" What the διδάσκαλος, the teacher, gives — our DIDACTIC: TEACHING, INSTRUCTION.",
+  "icon": "📖"
+ },
+ "σεαυτοῦ": {
+  "mn": "seh-av-TOO ≈ \"say, av-TOO.\" σέ you + αὐτοῦ self: YOURSELF.",
+  "icon": "🫵"
  }
 };
