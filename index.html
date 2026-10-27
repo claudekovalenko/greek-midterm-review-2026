@@ -64,12 +64,24 @@ textarea { width: 100%; min-height: 56px; border: 1px solid var(--line); border-
 .bar i { display: block; height: 100%; background: var(--accent); }
 .done { text-align: center; }
 .done .big { font-size: 40px; font-weight: 800; }
+.top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.top h1 { margin-bottom: 12px; }
+.toggles { display: flex; gap: 6px; margin-bottom: 8px; }
+.tog { border: 1px solid var(--line); background: var(--card); color: var(--mute); border-radius: 10px;
+  width: 40px; height: 40px; font-size: 18px; cursor: pointer; opacity: .55; }
+.tog.on { border-color: var(--accent); opacity: 1; }
 .link { background: none; border: 0; color: var(--accent); font: inherit; font-size: 14px; cursor: pointer; padding: 0; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Greek Midterm Review</h1>
+  <div class="top">
+    <h1>Greek Midterm Review</h1>
+    <div class="toggles">
+      <button class="tog" id="sfxTog" aria-label="Sound effects">🔊</button>
+      <button class="tog" id="musicTog" aria-label="Music">🎵</button>
+    </div>
+  </div>
   <div class="seg" id="mode">
     <button data-m="quiz">Past quizzes</button>
     <button data-m="mix">Midterm mix</button>
@@ -84,6 +96,7 @@ textarea { width: 100%; min-height: 56px; border: 1px solid var(--line); border-
 </div>
 <script src="data.js"></script>
 <script src="hooks.js"></script>
+<script src="sound.js"></script>
 <script>
 const SRC = {
   quiz: [["Q1","Quiz 1 · ch.1 vocab"],["Q2","Quiz 2 · Nom/Voc/Acc"],["Q3","Quiz 3 · Genitive"],["Q4","Quiz 4 · Dative"],["Q5","Quiz 5 · Article/Adj"],["Q6","Quiz 6 · Ch. 12"]],
@@ -105,10 +118,11 @@ let S = store.get("settings", {
   mix: ["Quizzes","Passage","Translate"],
   wrongOnQuiz: false, wrongHere: false, inOrder: false,
 });
+S.sfx ??= true; S.music ??= false;
 // Quiz 6 came later: switch it on once for anyone with older saved settings.
 if (!S.hasQ6) { if (!S.quiz.includes("Q6")) S.quiz.push("Q6"); S.mix = S.mix.filter((k) => k !== "Ch12"); S.hasQ6 = true; }
 let misses = store.get("misses", {}); // id -> count still owed
-let deck = [], pos = 0, right = 0, shown = false;
+let deck = [], pos = 0, right = 0, shown = false, streak = 0;
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
@@ -135,7 +149,8 @@ function build() {
       if (j > 0) [cards[i], cards[j]] = [cards[j], cards[i]];
     }
   }
-  deck = cards; pos = 0; right = 0; shown = false;
+  window._finished = false;
+  deck = cards; pos = 0; right = 0; shown = false; streak = 0;
   render();
 }
 
@@ -160,6 +175,7 @@ function render() {
   if (!total) { st.innerHTML = `<div class="card done"><p>No cards match. Turn a filter off.</p></div>`; return; }
   if (pos >= total) {
     const pct = Math.round((right / total) * 100);
+    if (total && !window._finished) { window._finished = true; Sound.play("finish", pct); }
     const owed = Object.keys(misses).length;
     st.innerHTML = `<div class="card done"><div class="big">${pct}%</div><p>${right} of ${total} right.</p>
       ${owed ? `<button class="btn primary" id="drillMisses">Drill the ${owed} I keep missing</button>` : ""}
@@ -191,15 +207,18 @@ function render() {
   const t = $("try"); t.value = window._draft || "";
   t.oninput = () => (window._draft = t.value);
   if (!shown) {
-    $("reveal").onclick = () => { shown = true; render(); };
+    $("reveal").onclick = reveal;
   } else {
     $("got").onclick = () => grade(true);
     $("miss").onclick = () => grade(false);
   }
 }
 
+function reveal() { shown = true; Sound.play("reveal"); render(); }
+
 function grade(ok) {
   const c = deck[pos];
+  Sound.play(ok ? "got" : "miss", ok ? ++streak : (streak = 0));
   if (ok) {
     right++;
     if (misses[c.id] && --misses[c.id] <= 0) delete misses[c.id];
@@ -216,6 +235,17 @@ function grade(ok) {
 
 function save() { store.set("settings", S); }
 
+function syncSound() {
+  Sound.sfxOn = S.sfx;
+  $("sfxTog").classList.toggle("on", S.sfx);
+  $("musicTog").classList.toggle("on", S.music);
+}
+$("sfxTog").onclick = () => { S.sfx = !S.sfx; save(); syncSound(); Sound.play("reveal"); };
+$("musicTog").onclick = () => { S.music = !S.music; save(); syncSound(); S.music ? Sound.startMusic() : Sound.stopMusic(); };
+// Browsers hold audio until the first tap; start the music then if it was left on.
+document.addEventListener("pointerdown", () => { Sound.unlock(); if (S.music) Sound.startMusic(); }, { once: true });
+syncSound();
+
 $("mode").onclick = (e) => { const m = e.target.dataset.m; if (!m) return; S.mode = m; save(); build(); };
 $("srcChips").onclick = (e) => {
   const k = e.target.dataset.src; if (!k) return;
@@ -228,7 +258,7 @@ $("restart").onclick = build;
 document.addEventListener("keydown", (e) => {
   if (e.target.tagName === "TEXTAREA" && !(e.key === "Enter" && (e.metaKey || e.ctrlKey))) return;
   if (pos >= deck.length) return;
-  if (!shown && (e.key === " " || e.key === "Enter")) { e.preventDefault(); shown = true; render(); }
+  if (!shown && (e.key === " " || e.key === "Enter")) { e.preventDefault(); reveal(); }
   else if (shown && (e.key === "1" || e.key === "ArrowLeft")) grade(false);
   else if (shown && (e.key === "2" || e.key === "ArrowRight")) grade(true);
 });
